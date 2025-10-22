@@ -105,5 +105,9 @@ rootSelector.addEventListener("change", (event) => {
         render(gMinor, document.getElementById("g-shape"));
         render(eMinor, document.getElementById("e-shape"));
         render(dMinor, document.getElementById("d-shape"));
+    } else if (chordMode === "reset") {
+        ["c-shape", "a-shape", "g-shape", "e-shape", "d-shape"].forEach(id => {
+        document.getElementById(id).innerHTML = "";
+        });
     }
 });
