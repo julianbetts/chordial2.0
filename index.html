@@ -4,10 +4,23 @@
     <meta charset="UTF-8">
     <title>Chord Renderer</title>
     <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
-
-<svg id="brett" height="46" width="45"></svg>
-
+<div class="grid-container">
+    <div id="root-selector-container">
+        <select id="root-selector">
+            <option value="major">Major</option>
+            <option value="minor">Minor</option>
+        </select>
+    </div>
+    <div id="diagram-container">
+        <svg id="c-shape" height="46" width="45"></svg>
+        <svg id="a-shape" height="46" width="45"></svg>
+        <svg id="g-shape" height="46" width="45"></svg>
+        <svg id="e-shape" height="46" width="45"></svg>
+        <svg id="d-shape" height="46" width="45"></svg>
+    </div>
+</div>
 </body>
 </html>

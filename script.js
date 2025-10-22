@@ -1,89 +1,109 @@
 // @ts-check
+const SVG_NS = "http://www.w3.org/2000/svg";
+const rootSelector = document.getElementById('root-selector');
 
 /**
- * @param {[number | null, number | null, number | null, number | null, number | null, number | null]} encoding
+ * @param {(number|null)[]} encoding length 6
+ * @param {HTMLElement} mount where to append the diagram
  */
-function render(encoding) {
-/** @type {SVGSVGElement} */
-    let svg = document.getElementById("brett");
 
+// chord shapes:
+const cMajor = [null, 3, 2, 0, 1, 0];
+const aMajor = [null, 0, 2, 2, 2, 0];
+const gMajor = [3, 2, 0, 0, 3, 3];
+const eMajor = [0, 2, 2, 1, 0, 0];
+const dMajor = [null, null, 0, 2, 3, 2];
+const cMinor = [null, 3, 1, 0, 1, 0];
+const aMinor = [null, 0, 2, 2, 1, 0];
+const gMinor = [3, 1, 0, 0, 1, 3];
+const eMinor = [0, 2, 2, 0, 0, 0];
+const dMinor = [null, null, 0, 2, 3, 1];
 
-    if (svg === null) return;
+function render(encoding, mount) {
+    mount.innerHTML = "";
 
-    svg.innerHTML = '';
+  // create an SVG per diagram
+    const svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("width", "50");
+    svg.setAttribute("height", "50");
+    svg.setAttribute("viewBox", "0 0 50 50");
+    mount.appendChild(svg);
 
-    // Render the strings
+    // strings
     for (let i = 0; i < 6; i++) {
-        const x = 10 + 5 * i;
-        const startY = 10;
-        const endY = 38;
-
-        let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("stroke-width", "1");
-        line.setAttribute("stroke", "black");
-        line.setAttribute("x1", x.toString());
-        line.setAttribute("y1", startY.toString());
-        line.setAttribute("x2", x.toString());
-        line.setAttribute("y2", endY.toString());
-
-        svg.appendChild(line);
+    const x = 10 + 5 * i;
+    const line = document.createElementNS(SVG_NS, "line");
+    line.setAttribute("stroke-width", "1");
+    line.setAttribute("stroke", "black");
+    line.setAttribute("x1", String(x));
+    line.setAttribute("y1", "10");
+    line.setAttribute("x2", String(x));
+    line.setAttribute("y2", "38");
+    svg.appendChild(line);
     }
 
-    // Render the frets
+    // frets
     for (let i = 0; i < 5; i++) {
-        const startX = 10;
-        const endX = 35;
-        const y = 10 + 7 * i;
-
-        let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("stroke-width", "1");
-        line.setAttribute("stroke", "black");
-        line.setAttribute("x1", startX.toString());
-        line.setAttribute("y1", y.toString());
-        line.setAttribute("x2", endX.toString());
-        line.setAttribute("y2", y.toString());
-
-        svg.appendChild(line);
+    const y = 10 + 7 * i;
+    const line = document.createElementNS(SVG_NS, "line");
+    line.setAttribute("stroke-width", "1");
+    line.setAttribute("stroke", "black");
+    line.setAttribute("x1", "10");
+    line.setAttribute("y1", String(y));
+    line.setAttribute("x2", "35");
+    line.setAttribute("y2", String(y));
+    svg.appendChild(line);
     }
 
+    // markers
     for (let i = 0; i < 6; i++) {
-        let x = encoding[i];
+    const xVal = encoding[i];
+    const cx = 10 + 5 * i;
 
-        if (x === 0) {
-            continue;
-        } else if (x === null) {
-            const startX = 10 + 5 * i - 2;
-            const endX = 10 + 5 * i + 2;
-            const topY = 10 - 5 - 2;
-            const bottomY = 10 - 5 + 2;
+    if (xVal === 0) continue;
 
-            let line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line1.setAttribute("stroke-width", "1");
-            line1.setAttribute("stroke", "black");
-            line1.setAttribute("x1", startX.toString());
-            line1.setAttribute("y1", topY.toString());
-            line1.setAttribute("x2", endX.toString());
-            line1.setAttribute("y2", bottomY.toString());
-            svg.appendChild(line1);
+    if (xVal === null) {
+        const startX = cx - 2, endX = cx + 2, topY = 3, botY = 7;
+        const l1 = document.createElementNS(SVG_NS, "line");
+        l1.setAttribute("stroke", "black");
+        l1.setAttribute("x1", String(startX));
+        l1.setAttribute("y1", String(topY));
+        l1.setAttribute("x2", String(endX));
+        l1.setAttribute("y2", String(botY));
+        svg.appendChild(l1);
 
-            let line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line2.setAttribute("stroke-width", "1");
-            line2.setAttribute("stroke", "black");
-            line2.setAttribute("x1", startX.toString());
-            line2.setAttribute("y1", bottomY.toString());
-            line2.setAttribute("x2", endX.toString());
-            line2.setAttribute("y2", topY.toString());
-            svg.appendChild(line2);
-        } else {
-            let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("r", "2");
-            circle.setAttribute("fill", "black");
-            circle.setAttribute("cx", (10 + 5 * i).toString());
-            circle.setAttribute("cy", (10 + (7 * (x - 1)) + 3.5).toString());
-            svg.appendChild(circle);
+        const l2 = document.createElementNS(SVG_NS, "line");
+        l2.setAttribute("stroke", "black");
+        l2.setAttribute("x1", String(startX));
+        l2.setAttribute("y1", String(botY));
+        l2.setAttribute("x2", String(endX));
+        l2.setAttribute("y2", String(topY));
+        svg.appendChild(l2);
+    } else {
+        const circle = document.createElementNS(SVG_NS, "circle");
+        circle.setAttribute("r", "2");
+        circle.setAttribute("fill", "black");
+        circle.setAttribute("cx", String(cx));
+        circle.setAttribute("cy", String(10 + 7 * (xVal - 1) + 3.5));
+        svg.appendChild(circle);
         }
     }
 }
 
-let dMajor = [null, null, 0, 2, 3, 2];
-render([null, null, 0, 2, 3, 2])
+rootSelector.addEventListener("change", (event) => {
+    const chordMode = event.target.value
+    if (chordMode === "major") {
+        render(cMajor, document.getElementById("c-shape"));
+        render(aMajor, document.getElementById("a-shape"));
+        render(gMajor, document.getElementById("g-shape"));
+        render(eMajor, document.getElementById("e-shape"));
+        render(dMajor, document.getElementById("d-shape"));
+ // C major
+    } else if (chordMode === "minor") {
+        render(cMinor, document.getElementById("c-shape"));
+        render(aMinor, document.getElementById("a-shape"));
+        render(gMinor, document.getElementById("g-shape"));
+        render(eMinor, document.getElementById("e-shape"));
+        render(dMinor, document.getElementById("d-shape"));
+    }
+});
